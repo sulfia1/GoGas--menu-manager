@@ -50,9 +50,17 @@
       box-shadow: 0 3px 12px rgba(0,0,0,.06);
     }
 
-    .card h2 {
+    h2 {
       margin-top: 0;
-      font-size: 18px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 7px 0;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
     }
 
     button {
@@ -64,6 +72,10 @@
       color: white;
       font-size: 16px;
       margin-top: 8px;
+    }
+
+    .hidden {
+      display: none;
     }
 
     #status {
@@ -80,7 +92,7 @@
 
   <header>
     <h1>GoGas Menu Manager</h1>
-    <p>Kelola outlet dan menu dengan mudah</p>
+    <p>Kelola outlet dan menu GoGas</p>
   </header>
 
   <main>
@@ -89,37 +101,67 @@
       Menghubungkan ke GoGas...
     </div>
 
-    <div class="card">
-      <h2>🏪 Outlet</h2>
-      <p>Kelola outlet GoGas kamu.</p>
-      <button>Kelola Outlet</button>
+    <!-- LOGIN -->
+    <div class="card" id="loginBox">
+      <h2>🔐 Login Admin</h2>
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Email"
+        autocomplete="email"
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+      >
+
+      <button onclick="login()">Login</button>
     </div>
 
-    <div class="card">
-      <h2>🍔 Menu</h2>
-      <p>Tambah, edit, dan atur ketersediaan menu.</p>
-      <button>Kelola Menu</button>
-    </div>
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
 
-    <div class="card">
-      <h2>📷 Foto Menu</h2>
-      <p>Upload foto makanan langsung dari HP.</p>
-      <button>Upload Foto</button>
-    </div>
+      <div class="card">
+        <h2>🏪 Outlet</h2>
+        <p>Kelola outlet GoGas.</p>
+        <button>Kelola Outlet</button>
+      </div>
 
-    <div class="card">
-      <h2>📊 Ringkasan</h2>
-      <p>Outlet: Belum diatur</p>
-      <p>Jumlah Menu: 0</p>
-      <p>Menu Aktif: 0</p>
+      <div class="card">
+        <h2>🍔 Menu</h2>
+        <p>Tambah dan kelola menu.</p>
+        <button>Kelola Menu</button>
+      </div>
+
+      <div class="card">
+        <h2>📷 Foto Menu</h2>
+        <p>Upload foto makanan.</p>
+        <button>Upload Foto</button>
+      </div>
+
+      <div class="card">
+        <h2>📊 Ringkasan</h2>
+        <p>Outlet: 0</p>
+        <p>Jumlah Menu: 0</p>
+        <p>Menu Aktif: 0</p>
+      </div>
+
+      <button onclick="logout()">Keluar</button>
+
     </div>
 
   </main>
 
   <script>
-    const SUPABASE_URL = "https://kigawlittgslscbnmngq.supabase.co";
+    const SUPABASE_URL =
+      "https://kigawlittgslscbnmngq.supabase.co";
 
-    const SUPABASE_KEY = "sb_publishable_kSluzLhdTM_CVj5A9PAIvA_oJqKFK8G";
+    const SUPABASE_KEY =
+      "sb_publishable_kSluzLhdTM_CVj5A9PAIvA_oJqKFK8G";
 
     const { createClient } = supabase;
 
@@ -128,8 +170,62 @@
       SUPABASE_KEY
     );
 
-    document.getElementById("status").textContent =
-      "✅ Terhubung ke server GoGas";
+    async function login() {
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      const status =
+        document.getElementById("status");
+
+      if (!email || !password) {
+        status.textContent =
+          "⚠️ Email dan password harus diisi.";
+        return;
+      }
+
+      status.textContent = "Sedang login...";
+
+      const { data, error } =
+        await db.auth.signInWithPassword({
+          email: email,
+          password: password
+        });
+
+      if (error) {
+        status.textContent =
+          "❌ Login gagal: " + error.message;
+        return;
+      }
+
+      status.textContent =
+        "✅ Login berhasil.";
+
+      document
+        .getElementById("loginBox")
+        .classList.add("hidden");
+
+      document
+        .getElementById("dashboard")
+        .classList.remove("hidden");
+    }
+
+    async function logout() {
+      await db.auth.signOut();
+
+      document
+        .getElementById("dashboard")
+        .classList.add("hidden");
+
+      document
+        .getElementById("loginBox")
+        .classList.remove("hidden");
+
+      document.getElementById("status").textContent =
+        "Anda sudah keluar.";
+    }
   </script>
 
 </body>
