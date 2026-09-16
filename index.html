@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoGas Menu Manager</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      color: #222;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 20px;
+      border-radius: 0 0 20px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      opacity: 0.8;
+    }
+
+    main {
+      padding: 18px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .card {
+      background: white;
+      padding: 18px;
+      margin-bottom: 14px;
+      border-radius: 16px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .menu {
+      display: grid;
+      gap: 10px;
+    }
+
+    .menu-item {
+      padding: 14px;
+      background: #f3f4f6;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>GoGas Menu Manager</h1>
+    <p>Kelola outlet dan menu dengan mudah</p>
+  </header>
+
+  <main>
+
+    <div class="card">
+      <h2>🏪 Outlet</h2>
+      <p>Kelola outlet GoGas kamu.</p>
+      <button>Kelola Outlet</button>
+    </div>
+
+    <div class="card">
+      <h2>🍔 Menu</h2>
+      <p>Tambah, edit, dan atur ketersediaan menu.</p>
+      <button>Kelola Menu</button>
+    </div>
+
+    <div class="card">
+      <h2>📷 Foto Menu</h2>
+      <p>Nanti kamu bisa mengunggah foto makanan langsung dari HP.</p>
+      <button>Upload Foto</button>
+    </div>
+
+    <div class="card">
+      <h2>📊 Ringkasan</h2>
+      <div class="menu">
+        <div class="menu-item">Outlet: Belum diatur</div>
+        <div class="menu-item">Jumlah Menu: 0</div>
+        <div class="menu-item">Menu Aktif: 0</div>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>
