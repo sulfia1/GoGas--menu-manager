@@ -50,10 +50,6 @@
       cursor: pointer;
     }
 
-    button:hover {
-      opacity: 0.9;
-    }
-
     .hidden {
       display: none;
     }
@@ -63,14 +59,6 @@
       padding: 12px;
       border-radius: 8px;
       margin-top: 10px;
-    }
-
-    .photo-preview {
-      width: 100%;
-      max-height: 250px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-top: 8px;
     }
 
     .logout {
@@ -90,21 +78,11 @@
 
 <div class="container">
 
-  <!-- LOGIN -->
   <div id="loginPage" class="card">
     <h1>GoGas Menu Manager</h1>
 
-    <input
-      type="email"
-      id="email"
-      placeholder="Email"
-    >
-
-    <input
-      type="password"
-      id="password"
-      placeholder="Password"
-    >
+    <input type="email" id="email" placeholder="Email">
+    <input type="password" id="password" placeholder="Password">
 
     <button onclick="login()">Login</button>
 
@@ -112,7 +90,6 @@
   </div>
 
 
-  <!-- DASHBOARD -->
   <div id="dashboard" class="hidden">
 
     <div class="card">
@@ -124,27 +101,12 @@
     </div>
 
 
-    <!-- TAMBAH OUTLET -->
     <div class="card">
       <h2>Tambah Outlet</h2>
 
-      <input
-        type="text"
-        id="outletName"
-        placeholder="Nama outlet"
-      >
-
-      <input
-        type="text"
-        id="outletAddress"
-        placeholder="Alamat"
-      >
-
-      <input
-        type="text"
-        id="outletPhone"
-        placeholder="Nomor HP"
-      >
+      <input type="text" id="outletName" placeholder="Nama outlet">
+      <input type="text" id="outletAddress" placeholder="Alamat">
+      <input type="text" id="outletPhone" placeholder="Nomor HP">
 
       <button onclick="addOutlet()">Tambah Outlet</button>
 
@@ -152,7 +114,6 @@
     </div>
 
 
-    <!-- DAFTAR OUTLET -->
     <div class="card">
       <h2>Daftar Outlet</h2>
 
@@ -162,7 +123,6 @@
     </div>
 
 
-    <!-- TAMBAH MENU -->
     <div class="card">
       <h2>Tambah Menu</h2>
 
@@ -170,17 +130,9 @@
         <option value="">Pilih outlet</option>
       </select>
 
-      <input
-        type="text"
-        id="menuName"
-        placeholder="Nama menu"
-      >
+      <input type="text" id="menuName" placeholder="Nama menu">
 
-      <input
-        type="number"
-        id="menuPrice"
-        placeholder="Harga"
-      >
+      <input type="number" id="menuPrice" placeholder="Harga">
 
       <textarea
         id="menuDescription"
@@ -188,9 +140,7 @@
         rows="4"
       ></textarea>
 
-      <label>
-        Foto Menu
-      </label>
+      <label>Foto Menu</label>
 
       <input
         type="file"
@@ -204,7 +154,6 @@
     </div>
 
 
-    <!-- DAFTAR MENU -->
     <div class="card">
       <h2>Daftar Menu</h2>
 
@@ -235,9 +184,7 @@ const db = window.supabase.createClient(
 );
 
 
-// =========================
 // LOGIN
-// =========================
 
 async function login() {
 
@@ -252,7 +199,7 @@ async function login() {
 
   message.innerHTML = "Login...";
 
-  const { data, error } =
+  const { error } =
     await db.auth.signInWithPassword({
       email: email,
       password: password
@@ -270,9 +217,7 @@ async function login() {
 }
 
 
-// =========================
 // LOGOUT
-// =========================
 
 async function logout() {
 
@@ -288,9 +233,7 @@ async function logout() {
 }
 
 
-// =========================
 // CEK LOGIN
-// =========================
 
 async function checkSession() {
 
@@ -312,9 +255,7 @@ async function checkSession() {
 }
 
 
-// =========================
 // DASHBOARD
-// =========================
 
 async function showDashboard() {
 
@@ -340,9 +281,7 @@ async function showDashboard() {
 }
 
 
-// =========================
 // TAMBAH OUTLET
-// =========================
 
 async function addOutlet() {
 
@@ -394,9 +333,7 @@ async function addOutlet() {
 }
 
 
-// =========================
 // LOAD OUTLET
-// =========================
 
 async function loadOutlets() {
 
@@ -454,14 +391,11 @@ async function loadOutlets() {
 
     list.appendChild(item);
 
-
     const option =
       document.createElement("option");
 
     option.value = outlet.id;
-
-    option.textContent =
-      outlet.name;
+    option.textContent = outlet.name;
 
     select.appendChild(option);
 
@@ -469,9 +403,7 @@ async function loadOutlets() {
 }
 
 
-// =========================
 // TAMBAH MENU
-// =========================
 
 async function addMenu() {
 
@@ -517,7 +449,6 @@ async function addMenu() {
     "Menyimpan menu...";
 
 
-  // SIMPAN MENU
   const {
     data: menuData,
     error: menuError
@@ -543,10 +474,6 @@ async function addMenu() {
     return;
   }
 
-
-  // =========================
-  // UPLOAD FOTO
-  // =========================
 
   const file =
     imageInput.files[0];
@@ -576,7 +503,7 @@ async function addMenu() {
       error: uploadError
     } = await db
       .storage
-      .from("menu-images")
+      .from("menu-image")
       .upload(
         filePath,
         file
@@ -595,7 +522,6 @@ async function addMenu() {
     }
 
 
-    // SIMPAN PATH FOTO
     const {
       error: photoError
     } = await db
@@ -632,9 +558,7 @@ async function addMenu() {
 }
 
 
-// =========================
 // LOAD MENU
-// =========================
 
 async function loadMenus() {
 
@@ -718,9 +642,7 @@ async function loadMenus() {
 }
 
 
-// =========================
 // ESCAPE HTML
-// =========================
 
 function escapeHtml(text) {
 
@@ -735,7 +657,8 @@ function escapeHtml(text) {
 }
 
 
-// JALANKAN
+// MULAI
+
 checkSession();
 
 </script>
