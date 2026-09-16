@@ -8,9 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -50,9 +48,7 @@
       box-shadow: 0 3px 12px rgba(0,0,0,.06);
     }
 
-    h2 {
-      margin-top: 0;
-    }
+    h2 { margin-top: 0; }
 
     input {
       width: 100%;
@@ -74,9 +70,7 @@
       margin-top: 8px;
     }
 
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
 
     #status {
       padding: 12px;
@@ -85,148 +79,244 @@
       margin-bottom: 14px;
       font-size: 14px;
     }
+
+    .outlet {
+      padding: 14px;
+      background: #f3f4f6;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .open {
+      color: green;
+      font-weight: bold;
+    }
+
+    .closed {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 
 <body>
 
-  <header>
-    <h1>GoGas Menu Manager</h1>
-    <p>Kelola outlet dan menu GoGas</p>
-  </header>
+<header>
+  <h1>GoGas Menu Manager</h1>
+  <p>Kelola outlet dan menu GoGas</p>
+</header>
 
-  <main>
+<main>
 
-    <div id="status">
-      Menghubungkan ke GoGas...
+  <div id="status">Memuat...</div>
+
+  <div id="loginBox" class="card">
+    <h2>🔐 Login Admin</h2>
+
+    <input type="email" id="email" placeholder="Email">
+
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="dashboard" class="hidden">
+
+    <div class="card">
+      <h2>🏪 Outlet</h2>
+
+      <div id="outletList">
+        Memuat outlet...
+      </div>
     </div>
 
-    <!-- LOGIN -->
-    <div class="card" id="loginBox">
-      <h2>🔐 Login Admin</h2>
-
-      <input
-        type="email"
-        id="email"
-        placeholder="Email"
-        autocomplete="email"
-      >
-
-      <input
-        type="password"
-        id="password"
-        placeholder="Password"
-        autocomplete="current-password"
-      >
-
-      <button onclick="login()">Login</button>
+    <div class="card">
+      <h2>🍔 Menu</h2>
+      <p>Kelola menu makanan dan minuman.</p>
+      <button>Kelola Menu</button>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="dashboard" class="hidden">
-
-      <div class="card">
-        <h2>🏪 Outlet</h2>
-        <p>Kelola outlet GoGas.</p>
-        <button>Kelola Outlet</button>
-      </div>
-
-      <div class="card">
-        <h2>🍔 Menu</h2>
-        <p>Tambah dan kelola menu.</p>
-        <button>Kelola Menu</button>
-      </div>
-
-      <div class="card">
-        <h2>📷 Foto Menu</h2>
-        <p>Upload foto makanan.</p>
-        <button>Upload Foto</button>
-      </div>
-
-      <div class="card">
-        <h2>📊 Ringkasan</h2>
-        <p>Outlet: 0</p>
-        <p>Jumlah Menu: 0</p>
-        <p>Menu Aktif: 0</p>
-      </div>
-
-      <button onclick="logout()">Keluar</button>
-
+    <div class="card">
+      <h2>📷 Foto Menu</h2>
+      <p>Upload foto makanan dari HP.</p>
+      <button>Upload Foto</button>
     </div>
 
-  </main>
+    <div class="card">
+      <h2>📊 Ringkasan</h2>
+      <p id="summary">Memuat data...</p>
+    </div>
 
-  <script>
-    const SUPABASE_URL =
-      "https://kigawlittgslscbnmngq.supabase.co";
+    <button onclick="logout()">Keluar</button>
 
-    const SUPABASE_KEY =
-      "sb_publishable_kSluzLhdTM_CVj5A9PAIvA_oJqKFK8G";
+  </div>
 
-    const { createClient } = supabase;
+</main>
 
-    const db = createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+<script>
+  const SUPABASE_URL =
+    "https://kigawlittgslscbnmngq.supabase.co";
 
-    async function login() {
-      const email =
-        document.getElementById("email").value.trim();
+  const SUPABASE_KEY =
+    "sb_publishable_kSluzLhdTM_CVj5A9PAIvA_oJqKFK8G";
 
-      const password =
-        document.getElementById("password").value;
+  const { createClient } = supabase;
 
-      const status =
-        document.getElementById("status");
+  const db = createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-      if (!email || !password) {
-        status.textContent =
-          "⚠️ Email dan password harus diisi.";
-        return;
-      }
+  const MERCHANT_ID =
+    "01b6caa0-e1bb-49d5-906b-68bd2fb1b58a";
 
-      status.textContent = "Sedang login...";
+  async function login() {
+    const email =
+      document.getElementById("email").value.trim();
 
-      const { data, error } =
-        await db.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
+    const password =
+      document.getElementById("password").value;
 
-      if (error) {
-        status.textContent =
-          "❌ Login gagal: " + error.message;
-        return;
-      }
+    const status =
+      document.getElementById("status");
 
+    if (!email || !password) {
       status.textContent =
-        "✅ Login berhasil.";
-
-      document
-        .getElementById("loginBox")
-        .classList.add("hidden");
-
-      document
-        .getElementById("dashboard")
-        .classList.remove("hidden");
+        "⚠️ Email dan password harus diisi.";
+      return;
     }
 
-    async function logout() {
-      await db.auth.signOut();
+    status.textContent = "Sedang login...";
 
-      document
-        .getElementById("dashboard")
-        .classList.add("hidden");
+    const { error } =
+      await db.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+      status.textContent =
+        "❌ Login gagal: " + error.message;
+      return;
+    }
+
+    status.textContent =
+      "✅ Login berhasil.";
+
+    document
+      .getElementById("loginBox")
+      .classList.add("hidden");
+
+    document
+      .getElementById("dashboard")
+      .classList.remove("hidden");
+
+    loadOutlets();
+  }
+
+  async function loadOutlets() {
+
+    const outletList =
+      document.getElementById("outletList");
+
+    outletList.textContent =
+      "Memuat outlet...";
+
+    const { data, error } =
+      await db
+        .from("outlets")
+        .select("*")
+        .eq("merchant_id", MERCHANT_ID)
+        .order("created_at", {
+          ascending: false
+        });
+
+    if (error) {
+      outletList.textContent =
+        "❌ Gagal mengambil outlet: " +
+        error.message;
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      outletList.textContent =
+        "Belum ada outlet.";
+      return;
+    }
+
+    outletList.innerHTML = "";
+
+    data.forEach(function(outlet) {
+
+      const item =
+        document.createElement("div");
+
+      item.className = "outlet";
+
+      const status =
+        outlet.is_open
+          ? '<span class="open">● Buka</span>'
+          : '<span class="closed">● Tutup</span>';
+
+      item.innerHTML =
+        "<strong>🏪 " +
+        outlet.name +
+        "</strong>" +
+        "<br>" +
+        outlet.address +
+        "<br>" +
+        "📞 " +
+        outlet.phone +
+        "<br>" +
+        status;
+
+      outletList.appendChild(item);
+    });
+
+    document.getElementById("summary").textContent =
+      "Jumlah outlet: " + data.length;
+  }
+
+  async function logout() {
+
+    await db.auth.signOut();
+
+    document
+      .getElementById("dashboard")
+      .classList.add("hidden");
+
+    document
+      .getElementById("loginBox")
+      .classList.remove("hidden");
+
+    document.getElementById("status").textContent =
+      "Anda sudah keluar.";
+  }
+
+  db.auth.getSession().then(function(result) {
+
+    if (result.data.session) {
 
       document
         .getElementById("loginBox")
+        .classList.add("hidden");
+
+      document
+        .getElementById("dashboard")
         .classList.remove("hidden");
 
       document.getElementById("status").textContent =
-        "Anda sudah keluar.";
+        "✅ Anda sudah login.";
+
+      loadOutlets();
+
+    } else {
+
+      document.getElementById("status").textContent =
+        "Silakan login untuk melanjutkan.";
     }
-  </script>
+  });
+</script>
 
 </body>
 </html>
