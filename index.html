@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GoGas Menu Manager</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -31,7 +33,7 @@
 
     header p {
       margin: 6px 0 0;
-      opacity: 0.8;
+      opacity: .8;
     }
 
     main {
@@ -45,7 +47,7 @@
       padding: 18px;
       margin-bottom: 14px;
       border-radius: 16px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+      box-shadow: 0 3px 12px rgba(0,0,0,.06);
     }
 
     .card h2 {
@@ -64,15 +66,12 @@
       margin-top: 8px;
     }
 
-    .menu {
-      display: grid;
-      gap: 10px;
-    }
-
-    .menu-item {
-      padding: 14px;
+    #status {
+      padding: 12px;
+      border-radius: 10px;
       background: #f3f4f6;
-      border-radius: 12px;
+      margin-bottom: 14px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -85,6 +84,10 @@
   </header>
 
   <main>
+
+    <div id="status">
+      Menghubungkan ke GoGas...
+    </div>
 
     <div class="card">
       <h2>🏪 Outlet</h2>
@@ -100,20 +103,34 @@
 
     <div class="card">
       <h2>📷 Foto Menu</h2>
-      <p>Nanti kamu bisa mengunggah foto makanan langsung dari HP.</p>
+      <p>Upload foto makanan langsung dari HP.</p>
       <button>Upload Foto</button>
     </div>
 
     <div class="card">
       <h2>📊 Ringkasan</h2>
-      <div class="menu">
-        <div class="menu-item">Outlet: Belum diatur</div>
-        <div class="menu-item">Jumlah Menu: 0</div>
-        <div class="menu-item">Menu Aktif: 0</div>
-      </div>
+      <p>Outlet: Belum diatur</p>
+      <p>Jumlah Menu: 0</p>
+      <p>Menu Aktif: 0</p>
     </div>
 
   </main>
+
+  <script>
+    const SUPABASE_URL = "https://kigawlittgslscbnmngq.supabase.co";
+
+    const SUPABASE_KEY = "sb_publishable_kSluzLhdTM_CVj5A9PAIvA_oJqKFK8G";
+
+    const { createClient } = supabase;
+
+    const db = createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    document.getElementById("status").textContent =
+      "✅ Terhubung ke server GoGas";
+  </script>
 
 </body>
 </html>
