@@ -28,54 +28,60 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    h1, h2, h3 {
+    h1, h2 {
       margin-top: 0;
     }
 
-    input, textarea, select {
+    input, select, textarea, button {
       width: 100%;
       box-sizing: border-box;
       padding: 12px;
-      margin: 6px 0 12px;
-      border: 1px solid #ccc;
+      margin-top: 8px;
+      margin-bottom: 12px;
       border-radius: 8px;
+      border: 1px solid #ccc;
       font-size: 16px;
     }
 
     button {
-      width: 100%;
-      padding: 12px;
-      border: 0;
-      border-radius: 8px;
       background: #111;
       color: white;
-      font-size: 16px;
-      margin-top: 5px;
+      border: none;
+      cursor: pointer;
     }
 
     button:hover {
       opacity: 0.9;
     }
 
-    .outlet, .menu {
+    .hidden {
+      display: none;
+    }
+
+    .item {
       border: 1px solid #ddd;
       padding: 12px;
       border-radius: 8px;
       margin-top: 10px;
     }
 
-    .success {
-      color: green;
-      margin-top: 10px;
+    .photo-preview {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: 8px;
     }
 
-    .error {
-      color: red;
-      margin-top: 10px;
+    .logout {
+      background: #c62828;
     }
 
-    .hidden {
-      display: none;
+    .status {
+      padding: 10px;
+      background: #eee;
+      border-radius: 8px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -84,78 +90,127 @@
 
 <div class="container">
 
+  <!-- LOGIN -->
   <div id="loginPage" class="card">
-    <h1>🛵 GoGas</h1>
-    <h2>Login Admin</h2>
+    <h1>GoGas Menu Manager</h1>
 
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Password">
+    <input
+      type="email"
+      id="email"
+      placeholder="Email"
+    >
 
-    <button onclick="login()">🔐 Login</button>
+    <input
+      type="password"
+      id="password"
+      placeholder="Password"
+    >
+
+    <button onclick="login()">Login</button>
 
     <div id="loginMessage"></div>
   </div>
 
 
+  <!-- DASHBOARD -->
   <div id="dashboard" class="hidden">
 
     <div class="card">
-      <h1>🛵 GoGas Menu Manager</h1>
-      <p>Dashboard Admin</p>
-      <button onclick="logout()">🚪 Logout</button>
+      <h1>GoGas Menu Manager</h1>
+
+      <div id="userInfo" class="status"></div>
+
+      <button class="logout" onclick="logout()">Logout</button>
     </div>
 
 
+    <!-- TAMBAH OUTLET -->
     <div class="card">
-      <h2>🏪 Tambah Outlet</h2>
+      <h2>Tambah Outlet</h2>
 
-      <input id="outletName" placeholder="Nama outlet">
-      <input id="outletAddress" placeholder="Alamat outlet">
-      <input id="outletPhone" placeholder="Nomor HP">
+      <input
+        type="text"
+        id="outletName"
+        placeholder="Nama outlet"
+      >
 
-      <button onclick="addOutlet()">💾 Simpan Outlet</button>
+      <input
+        type="text"
+        id="outletAddress"
+        placeholder="Alamat"
+      >
+
+      <input
+        type="text"
+        id="outletPhone"
+        placeholder="Nomor HP"
+      >
+
+      <button onclick="addOutlet()">Tambah Outlet</button>
 
       <div id="outletMessage"></div>
     </div>
 
 
+    <!-- DAFTAR OUTLET -->
     <div class="card">
-      <h2>🏪 Daftar Outlet</h2>
-      <div id="outletList">Memuat outlet...</div>
+      <h2>Daftar Outlet</h2>
+
+      <div id="outletList">
+        Memuat outlet...
+      </div>
     </div>
 
 
+    <!-- TAMBAH MENU -->
     <div class="card">
-      <h2>🍔 Tambah Menu</h2>
+      <h2>Tambah Menu</h2>
 
-      <label>Pilih Outlet</label>
       <select id="menuOutlet">
-        <option value="">-- Pilih Outlet --</option>
+        <option value="">Pilih outlet</option>
       </select>
 
-      <input id="menuName" placeholder="Nama menu">
+      <input
+        type="text"
+        id="menuName"
+        placeholder="Nama menu"
+      >
 
       <input
-        id="menuPrice"
         type="number"
+        id="menuPrice"
         placeholder="Harga"
       >
 
       <textarea
         id="menuDescription"
         placeholder="Deskripsi menu"
-        rows="3"
+        rows="4"
       ></textarea>
 
-      <button onclick="addMenu()">💾 Simpan Menu</button>
+      <label>
+        Foto Menu
+      </label>
+
+      <input
+        type="file"
+        id="menuImage"
+        accept="image/*"
+      >
+
+      <button onclick="addMenu()">Tambah Menu</button>
 
       <div id="menuMessage"></div>
     </div>
 
 
+    <!-- DAFTAR MENU -->
     <div class="card">
-      <h2>🍔 Daftar Menu</h2>
-      <div id="menuList">Pilih outlet untuk melihat menu.</div>
+      <h2>Daftar Menu</h2>
+
+      <div id="menuList">
+        Memuat menu...
+      </div>
     </div>
 
   </div>
@@ -165,90 +220,152 @@
 
 <script>
 
-  const SUPABASE_URL = "https://kigawlittgslscbnmngq.supabase.co";
+const SUPABASE_URL =
+  "https://kigawlittgslscbnmngq.supabase.co";
 
-  const SUPABASE_KEY = "sb_publishable_kSluzLhdTM_CVj5A9PAIvA_oJqKFK8G";
+const SUPABASE_KEY =
+  "sb_publishable_kSluzLhdTM_CVj5A9PAIvA_oJqKFK8G";
 
-  const MERCHANT_ID = "01b6caa0-e1bb-49d5-906b-68bd2fb1b58a";
+const MERCHANT_ID =
+  "01b6caa0-e1bb-49d5-906b-68bd2fb1b58a";
 
-  const db = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
-  async function login() {
+// =========================
+// LOGIN
+// =========================
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+async function login() {
 
-    const message = document.getElementById("loginMessage");
+  const email =
+    document.getElementById("email").value;
 
-    message.innerHTML = "Sedang login...";
+  const password =
+    document.getElementById("password").value;
 
-    const { error } = await db.auth.signInWithPassword({
+  const message =
+    document.getElementById("loginMessage");
+
+  message.innerHTML = "Login...";
+
+  const { data, error } =
+    await db.auth.signInWithPassword({
       email: email,
       password: password
     });
 
-    if (error) {
-      message.innerHTML =
-        '<p class="error">❌ ' + error.message + '</p>';
-      return;
-    }
-
+  if (error) {
     message.innerHTML =
-      '<p class="success">✅ Login berhasil.</p>';
+      "Login gagal: " + error.message;
+    return;
+  }
 
+  message.innerHTML = "";
+
+  showDashboard();
+}
+
+
+// =========================
+// LOGOUT
+// =========================
+
+async function logout() {
+
+  await db.auth.signOut();
+
+  document
+    .getElementById("dashboard")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginPage")
+    .classList.remove("hidden");
+}
+
+
+// =========================
+// CEK LOGIN
+// =========================
+
+async function checkSession() {
+
+  const {
+    data: { session }
+  } = await db.auth.getSession();
+
+  if (session) {
     showDashboard();
-  }
-
-
-  async function logout() {
-
-    await db.auth.signOut();
-
-    document.getElementById("dashboard")
-      .classList.add("hidden");
-
-    document.getElementById("loginPage")
-      .classList.remove("hidden");
-  }
-
-
-  async function showDashboard() {
-
-    document.getElementById("loginPage")
-      .classList.add("hidden");
-
-    document.getElementById("dashboard")
+  } else {
+    document
+      .getElementById("loginPage")
       .classList.remove("hidden");
 
-    await loadOutlets();
+    document
+      .getElementById("dashboard")
+      .classList.add("hidden");
+  }
+}
+
+
+// =========================
+// DASHBOARD
+// =========================
+
+async function showDashboard() {
+
+  const {
+    data: { session }
+  } = await db.auth.getSession();
+
+  if (!session) return;
+
+  document
+    .getElementById("loginPage")
+    .classList.add("hidden");
+
+  document
+    .getElementById("dashboard")
+    .classList.remove("hidden");
+
+  document.getElementById("userInfo").innerHTML =
+    "Login sebagai: " + session.user.email;
+
+  loadOutlets();
+  loadMenus();
+}
+
+
+// =========================
+// TAMBAH OUTLET
+// =========================
+
+async function addOutlet() {
+
+  const name =
+    document.getElementById("outletName").value;
+
+  const address =
+    document.getElementById("outletAddress").value;
+
+  const phone =
+    document.getElementById("outletPhone").value;
+
+  const message =
+    document.getElementById("outletMessage");
+
+  if (!name) {
+    message.innerHTML =
+      "Nama outlet wajib diisi.";
+    return;
   }
 
-
-  async function addOutlet() {
-
-    const name =
-      document.getElementById("outletName").value.trim();
-
-    const address =
-      document.getElementById("outletAddress").value.trim();
-
-    const phone =
-      document.getElementById("outletPhone").value.trim();
-
-    const message =
-      document.getElementById("outletMessage");
-
-    if (!name) {
-      message.innerHTML =
-        '<p class="error">❌ Nama outlet wajib diisi.</p>';
-      return;
-    }
-
-    const { error } = await db
+  const { error } =
+    await db
       .from("outlets")
       .insert({
         merchant_id: MERCHANT_ID,
@@ -258,237 +375,368 @@
         is_open: true
       });
 
-    if (error) {
-      message.innerHTML =
-        '<p class="error">❌ ' + error.message + '</p>';
-      return;
-    }
+  if (error) {
 
     message.innerHTML =
-      '<p class="success">✅ Outlet berhasil ditambahkan.</p>';
+      "Gagal: " + error.message;
 
-    document.getElementById("outletName").value = "";
-    document.getElementById("outletAddress").value = "";
-    document.getElementById("outletPhone").value = "";
-
-    await loadOutlets();
+    return;
   }
 
+  message.innerHTML =
+    "Outlet berhasil ditambahkan.";
 
-  async function loadOutlets() {
+  document.getElementById("outletName").value = "";
+  document.getElementById("outletAddress").value = "";
+  document.getElementById("outletPhone").value = "";
 
-    const outletList =
-      document.getElementById("outletList");
-
-    const menuOutlet =
-      document.getElementById("menuOutlet");
-
-    const { data, error } = await db
-      .from("outlets")
-      .select("*")
-      .eq("merchant_id", MERCHANT_ID)
-      .order("created_at", { ascending: true });
-
-    if (error) {
-      outletList.innerHTML =
-        '<p class="error">❌ ' + error.message + '</p>';
-      return;
-    }
-
-    outletList.innerHTML = "";
-
-    menuOutlet.innerHTML =
-      '<option value="">-- Pilih Outlet --</option>';
-
-    if (!data || data.length === 0) {
-
-      outletList.innerHTML =
-        "<p>Belum ada outlet.</p>";
-
-      return;
-    }
-
-    data.forEach(outlet => {
-
-      const div = document.createElement("div");
-
-      div.className = "outlet";
-
-      div.innerHTML = `
-        <strong>🏪 ${escapeHtml(outlet.name)}</strong>
-        <br>
-        📍 ${escapeHtml(outlet.address || "-")}
-        <br>
-        📞 ${escapeHtml(outlet.phone || "-")}
-        <br>
-        Status: ${outlet.is_open ? "🟢 Buka" : "🔴 Tutup"}
-      `;
-
-      outletList.appendChild(div);
+  loadOutlets();
+}
 
 
-      const option =
-        document.createElement("option");
+// =========================
+// LOAD OUTLET
+// =========================
 
-      option.value = outlet.id;
-      option.textContent = outlet.name;
+async function loadOutlets() {
 
-      menuOutlet.appendChild(option);
-
+  const {
+    data,
+    error
+  } = await db
+    .from("outlets")
+    .select("*")
+    .eq("merchant_id", MERCHANT_ID)
+    .order("created_at", {
+      ascending: false
     });
+
+  const list =
+    document.getElementById("outletList");
+
+  const select =
+    document.getElementById("menuOutlet");
+
+  if (error) {
+
+    list.innerHTML =
+      "Gagal memuat outlet: " +
+      error.message;
+
+    return;
+  }
+
+  list.innerHTML = "";
+
+  select.innerHTML =
+    '<option value="">Pilih outlet</option>';
+
+  if (!data || data.length === 0) {
+
+    list.innerHTML =
+      "Belum ada outlet.";
+
+    return;
+  }
+
+  data.forEach(outlet => {
+
+    const item =
+      document.createElement("div");
+
+    item.className = "item";
+
+    item.innerHTML = `
+      <strong>${escapeHtml(outlet.name)}</strong><br>
+      ${escapeHtml(outlet.address || "")}<br>
+      ${escapeHtml(outlet.phone || "")}
+    `;
+
+    list.appendChild(item);
+
+
+    const option =
+      document.createElement("option");
+
+    option.value = outlet.id;
+
+    option.textContent =
+      outlet.name;
+
+    select.appendChild(option);
+
+  });
+}
+
+
+// =========================
+// TAMBAH MENU
+// =========================
+
+async function addMenu() {
+
+  const outletId =
+    document.getElementById("menuOutlet").value;
+
+  const name =
+    document.getElementById("menuName").value;
+
+  const price =
+    document.getElementById("menuPrice").value;
+
+  const description =
+    document.getElementById("menuDescription").value;
+
+  const imageInput =
+    document.getElementById("menuImage");
+
+  const message =
+    document.getElementById("menuMessage");
+
+
+  if (!outletId) {
+    message.innerHTML =
+      "Pilih outlet terlebih dahulu.";
+    return;
+  }
+
+  if (!name) {
+    message.innerHTML =
+      "Nama menu wajib diisi.";
+    return;
+  }
+
+  if (!price) {
+    message.innerHTML =
+      "Harga wajib diisi.";
+    return;
   }
 
 
-  async function addMenu() {
+  message.innerHTML =
+    "Menyimpan menu...";
 
-    const outletId =
-      document.getElementById("menuOutlet").value;
 
-    const name =
-      document.getElementById("menuName").value.trim();
+  // SIMPAN MENU
+  const {
+    data: menuData,
+    error: menuError
+  } = await db
+    .from("menus")
+    .insert({
+      outlet_id: outletId,
+      name: name,
+      price: Number(price),
+      description: description,
+      is_available: true
+    })
+    .select()
+    .single();
 
-    const price =
-      document.getElementById("menuPrice").value;
 
-    const description =
-      document.getElementById("menuDescription").value.trim();
+  if (menuError) {
 
-    const message =
-      document.getElementById("menuMessage");
+    message.innerHTML =
+      "Gagal menyimpan menu: " +
+      menuError.message;
 
-    if (!outletId) {
+    return;
+  }
+
+
+  // =========================
+  // UPLOAD FOTO
+  // =========================
+
+  const file =
+    imageInput.files[0];
+
+
+  if (file) {
+
+    message.innerHTML =
+      "Menu tersimpan. Mengupload foto...";
+
+
+    const safeFileName =
+      file.name.replace(
+        /[^a-zA-Z0-9._-]/g,
+        "_"
+      );
+
+    const filePath =
+      menuData.id +
+      "/" +
+      Date.now() +
+      "-" +
+      safeFileName;
+
+
+    const {
+      error: uploadError
+    } = await db
+      .storage
+      .from("menu-images")
+      .upload(
+        filePath,
+        file
+      );
+
+
+    if (uploadError) {
+
       message.innerHTML =
-        '<p class="error">❌ Pilih outlet terlebih dahulu.</p>';
+        "Menu berhasil dibuat, tetapi foto gagal diupload: " +
+        uploadError.message;
+
+      loadMenus();
+
       return;
     }
 
-    if (!name) {
-      message.innerHTML =
-        '<p class="error">❌ Nama menu wajib diisi.</p>';
-      return;
-    }
 
-    if (!price) {
-      message.innerHTML =
-        '<p class="error">❌ Harga menu wajib diisi.</p>';
-      return;
-    }
-
-    const { error } = await db
-      .from("menus")
+    // SIMPAN PATH FOTO
+    const {
+      error: photoError
+    } = await db
+      .from("menu_photos")
       .insert({
-        outlet_id: outletId,
-        name: name,
-        price: Number(price),
-        description: description,
-        is_available: true
+        menu_id: menuData.id,
+        image_url: filePath,
+        sort_order: 0
       });
 
-    if (error) {
+
+    if (photoError) {
+
       message.innerHTML =
-        '<p class="error">❌ ' + error.message + '</p>';
+        "Foto berhasil diupload, tetapi data foto gagal disimpan: " +
+        photoError.message;
+
+      loadMenus();
+
       return;
     }
-
-    message.innerHTML =
-      '<p class="success">✅ Menu berhasil ditambahkan.</p>';
-
-    document.getElementById("menuName").value = "";
-    document.getElementById("menuPrice").value = "";
-    document.getElementById("menuDescription").value = "";
-
-    await loadMenus(outletId);
   }
 
 
-  document
-    .getElementById("menuOutlet")
-    .addEventListener("change", function() {
+  message.innerHTML =
+    "Menu dan foto berhasil disimpan.";
 
-      const outletId = this.value;
+  document.getElementById("menuName").value = "";
+  document.getElementById("menuPrice").value = "";
+  document.getElementById("menuDescription").value = "";
+  document.getElementById("menuImage").value = "";
 
-      if (outletId) {
-        loadMenus(outletId);
-      } else {
-        document.getElementById("menuList").innerHTML =
-          "Pilih outlet untuk melihat menu.";
-      }
+  loadMenus();
+}
 
+
+// =========================
+// LOAD MENU
+// =========================
+
+async function loadMenus() {
+
+  const {
+    data,
+    error
+  } = await db
+    .from("menus")
+    .select(`
+      *,
+      menu_photos (
+        id,
+        image_url,
+        sort_order
+      )
+    `)
+    .order("created_at", {
+      ascending: false
     });
 
 
-  async function loadMenus(outletId) {
+  const list =
+    document.getElementById("menuList");
 
-    const menuList =
-      document.getElementById("menuList");
 
-    menuList.innerHTML = "Memuat menu...";
+  if (error) {
 
-    const { data, error } = await db
-      .from("menus")
-      .select("*")
-      .eq("outlet_id", outletId)
-      .order("created_at", { ascending: true });
+    list.innerHTML =
+      "Gagal memuat menu: " +
+      error.message;
 
-    if (error) {
-      menuList.innerHTML =
-        '<p class="error">❌ ' + error.message + '</p>';
-      return;
-    }
-
-    if (!data || data.length === 0) {
-      menuList.innerHTML =
-        "<p>Belum ada menu di outlet ini.</p>";
-      return;
-    }
-
-    menuList.innerHTML = "";
-
-    data.forEach(menu => {
-
-      const div = document.createElement("div");
-
-      div.className = "menu";
-
-      div.innerHTML = `
-        <strong>🍔 ${escapeHtml(menu.name)}</strong>
-        <br>
-        💰 Rp ${Number(menu.price || 0).toLocaleString("id-ID")}
-        <br>
-        📝 ${escapeHtml(menu.description || "-")}
-        <br>
-        Status: ${menu.is_available ? "🟢 Tersedia" : "🔴 Tidak tersedia"}
-      `;
-
-      menuList.appendChild(div);
-
-    });
+    return;
   }
 
 
-  function escapeHtml(text) {
+  list.innerHTML = "";
 
-    const div = document.createElement("div");
 
-    div.textContent = text || "";
+  if (!data || data.length === 0) {
 
-    return div.innerHTML;
+    list.innerHTML =
+      "Belum ada menu.";
+
+    return;
   }
 
 
-  async function checkSession() {
+  data.forEach(menu => {
 
-    const { data } =
-      await db.auth.getSession();
+    const item =
+      document.createElement("div");
 
-    if (data.session) {
-      showDashboard();
+    item.className = "item";
+
+
+    let photoText =
+      "Belum ada foto";
+
+
+    if (
+      menu.menu_photos &&
+      menu.menu_photos.length > 0
+    ) {
+
+      photoText =
+        "📷 Foto tersimpan";
     }
 
-  }
+
+    item.innerHTML = `
+      <strong>${escapeHtml(menu.name)}</strong><br>
+      Harga: Rp ${Number(menu.price).toLocaleString("id-ID")}<br>
+      ${escapeHtml(menu.description || "")}<br>
+      <small>${photoText}</small>
+    `;
 
 
-  checkSession();
+    list.appendChild(item);
+
+  });
+}
+
+
+// =========================
+// ESCAPE HTML
+// =========================
+
+function escapeHtml(text) {
+
+  if (!text) return "";
+
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+// JALANKAN
+checkSession();
 
 </script>
 
