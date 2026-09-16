@@ -110,6 +110,7 @@
 
   <div id="status">Memuat...</div>
 
+  <!-- LOGIN -->
   <div id="loginBox" class="card">
     <h2>🔐 Login Admin</h2>
 
@@ -120,28 +121,60 @@
     <button onclick="login()">Login</button>
   </div>
 
+  <!-- DASHBOARD -->
   <div id="dashboard" class="hidden">
 
+    <!-- TAMBAH OUTLET -->
     <div class="card">
-      <h2>🏪 Outlet</h2>
+      <h2>➕ Tambah Outlet</h2>
+
+      <input
+        type="text"
+        id="outletName"
+        placeholder="Nama outlet"
+      >
+
+      <input
+        type="text"
+        id="outletAddress"
+        placeholder="Alamat outlet"
+      >
+
+      <input
+        type="text"
+        id="outletPhone"
+        placeholder="Nomor HP outlet"
+      >
+
+      <button onclick="addOutlet()">
+        💾 Simpan Outlet
+      </button>
+    </div>
+
+    <!-- DAFTAR OUTLET -->
+    <div class="card">
+      <h2>🏪 Daftar Outlet</h2>
 
       <div id="outletList">
         Memuat outlet...
       </div>
     </div>
 
+    <!-- MENU -->
     <div class="card">
       <h2>🍔 Menu</h2>
       <p>Kelola menu makanan dan minuman.</p>
       <button>Kelola Menu</button>
     </div>
 
+    <!-- FOTO -->
     <div class="card">
       <h2>📷 Foto Menu</h2>
       <p>Upload foto makanan dari HP.</p>
       <button>Upload Foto</button>
     </div>
 
+    <!-- RINGKASAN -->
     <div class="card">
       <h2>📊 Ringkasan</h2>
       <p id="summary">Memuat data...</p>
@@ -154,6 +187,7 @@
 </main>
 
 <script>
+
   const SUPABASE_URL =
     "https://kigawlittgslscbnmngq.supabase.co";
 
@@ -170,7 +204,10 @@
   const MERCHANT_ID =
     "01b6caa0-e1bb-49d5-906b-68bd2fb1b58a";
 
+
+  // LOGIN
   async function login() {
+
     const email =
       document.getElementById("email").value.trim();
 
@@ -186,7 +223,8 @@
       return;
     }
 
-    status.textContent = "Sedang login...";
+    status.textContent =
+      "Sedang login...";
 
     const { error } =
       await db.auth.signInWithPassword({
@@ -214,6 +252,8 @@
     loadOutlets();
   }
 
+
+  // TAMPILKAN OUTLET
   async function loadOutlets() {
 
     const outletList =
@@ -277,6 +317,64 @@
       "Jumlah outlet: " + data.length;
   }
 
+
+  // TAMBAH OUTLET
+  async function addOutlet() {
+
+    const name =
+      document.getElementById("outletName")
+        .value.trim();
+
+    const address =
+      document.getElementById("outletAddress")
+        .value.trim();
+
+    const phone =
+      document.getElementById("outletPhone")
+        .value.trim();
+
+    const status =
+      document.getElementById("status");
+
+    if (!name || !address || !phone) {
+      status.textContent =
+        "⚠️ Nama, alamat, dan nomor HP harus diisi.";
+      return;
+    }
+
+    status.textContent =
+      "Sedang menyimpan outlet...";
+
+    const { error } =
+      await db
+        .from("outlets")
+        .insert({
+          merchant_id: MERCHANT_ID,
+          name: name,
+          address: address,
+          phone: phone,
+          is_open: true
+        });
+
+    if (error) {
+      status.textContent =
+        "❌ Gagal menyimpan: " +
+        error.message;
+      return;
+    }
+
+    status.textContent =
+      "✅ Outlet berhasil ditambahkan.";
+
+    document.getElementById("outletName").value = "";
+    document.getElementById("outletAddress").value = "";
+    document.getElementById("outletPhone").value = "";
+
+    loadOutlets();
+  }
+
+
+  // LOGOUT
   async function logout() {
 
     await db.auth.signOut();
@@ -293,6 +391,8 @@
       "Anda sudah keluar.";
   }
 
+
+  // CEK SESSION
   db.auth.getSession().then(function(result) {
 
     if (result.data.session) {
@@ -316,6 +416,7 @@
         "Silakan login untuk melanjutkan.";
     }
   });
+
 </script>
 
 </body>
